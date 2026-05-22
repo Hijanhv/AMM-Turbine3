@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { PublicKey, SystemProgram } from "@solana/web3.js";
@@ -57,10 +57,22 @@ export function PoolApp() {
     return buildProgram(connection, wallet as unknown as AnchorWallet);
   }, [connection, wallet]);
 
+  const bannerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const flash = useCallback((b: Banner) => {
+    if (bannerTimer.current) {
+      clearTimeout(bannerTimer.current);
+    }
     setBanner(b);
-    setTimeout(() => setBanner(null), 12_000);
+    bannerTimer.current = setTimeout(() => setBanner(null), 12_000);
   }, []);
+
+  useEffect(
+    () => () => {
+      if (bannerTimer.current) clearTimeout(bannerTimer.current);
+    },
+    [],
+  );
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-10 w-full">
