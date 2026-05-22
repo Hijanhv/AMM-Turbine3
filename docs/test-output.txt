@@ -1,14 +1,10 @@
-    Finished `release` profile [optimized] target(s) in 0.32s
-    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.18s
-     Running unittests src/lib.rs (/Users/janhavi/Desktop/AMM-Turbine3/target/debug/deps/amm-38b490b7da8bbf83)
-
 Found a 'test' script in the Anchor.toml. Running it as a test suite!
 
 Running test suite: "/Users/janhavi/Desktop/AMM-Turbine3/Anchor.toml"
 
 yarn run v1.22.22
 $ /Users/janhavi/Desktop/AMM-Turbine3/node_modules/.bin/ts-mocha -p ./tsconfig.json -t 1000000 'tests/**/*.ts'
-(node:74999) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/janhavi/Desktop/AMM-Turbine3/tests/amm.ts is not specified and it doesn't parse as CommonJS.
+(node:4782) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/janhavi/Desktop/AMM-Turbine3/tests/amm.ts is not specified and it doesn't parse as CommonJS.
 Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
 To eliminate this warning, add "type": "module" to /Users/janhavi/Desktop/AMM-Turbine3/package.json.
 (Use `node --trace-warnings ...` to show where the warning was created)
@@ -21,18 +17,18 @@ To eliminate this warning, add "type": "module" to /Users/janhavi/Desktop/AMM-Tu
       ✔ rejects fee >= 10_000 bps
     deposit
       ✔ bootstraps the pool with 100 A + 400 B and mints sqrt(a*b) LP (466ms)
-      ✔ a second proportional deposit issues LP proportional to share of reserves (489ms)
+      ✔ a second proportional deposit issues LP proportional to share of reserves (485ms)
       ✔ rejects deposit when required B exceeds max_b (slippage)
       ✔ rejects zero-amount deposit
     swap
-      ✔ swaps A for B and grows the constant product (fee accrues) (449ms)
-      ✔ swaps B for A in the reverse direction (480ms)
+      ✔ swaps A for B and grows the constant product (fee accrues) (463ms)
+      ✔ swaps B for A in the reverse direction (471ms)
       ✔ rejects a swap when min_amount_out is too high (slippage)
       ✔ rejects a zero-amount swap
     lock / unlock
       ✔ rejects lock from a non-authority signer
-      ✔ locks the pool and blocks deposits, withdraws and swaps (456ms)
-      ✔ unlocks the pool and lets trading resume (950ms)
+      ✔ locks the pool and blocks deposits, withdraws and swaps (459ms)
+      ✔ unlocks the pool and lets trading resume (945ms)
     withdraw
       ✔ burns LP tokens for a pro-rata share of both vaults (481ms)
       ✔ rejects a withdraw when min_a is unsatisfiable (slippage)
@@ -41,4 +37,4 @@ To eliminate this warning, add "type": "module" to /Users/janhavi/Desktop/AMM-Tu
 
   17 passing (10s)
 
-Done in 11.30s.
+Done in 11.73s.
