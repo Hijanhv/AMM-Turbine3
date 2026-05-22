@@ -1,19 +1,12 @@
 import type { NextConfig } from "next";
 import path from "node:path";
 
-// Vercel's auto-deploy clones the whole repo and runs the build inside
-// `app/` (our rootDirectory). Vercel's post-build then expects the Next.js
-// output one directory up — at `/vercel/path0/.next/` — but Next defaults
-// to writing into `app/.next/`. When VERCEL=1, redirect the output (and
-// the file-tracing root) one directory up so they agree.
-const onVercel = process.env.VERCEL === "1";
-const parent = path.resolve(process.cwd(), "..");
-
-const nextConfig: NextConfig = onVercel
-  ? {
-      outputFileTracingRoot: parent,
-      distDir: path.join(parent, ".next"),
-    }
-  : {};
+// Without an explicit `outputFileTracingRoot`, Vercel's `modifyConfig`
+// crashes with `path argument undefined` because it can't infer one. Pin
+// it to the repo root (one up from this `app/` directory). Leave `distDir`
+// as the default so Vercel finds the build output at `app/.next/`.
+const nextConfig: NextConfig = {
+  outputFileTracingRoot: path.resolve(process.cwd(), ".."),
+};
 
 export default nextConfig;
