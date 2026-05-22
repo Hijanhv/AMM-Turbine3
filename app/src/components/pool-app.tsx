@@ -63,55 +63,67 @@ export function PoolApp() {
   }, []);
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12 w-full">
-      <header className="flex items-center justify-between mb-10">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">AMM</h1>
-          <p className="text-sm text-zinc-400 mt-1">
-            Constant-product pool on Solana devnet · program{" "}
-            <a
-              className="underline decoration-dotted"
-              href={explorerUrl("address", PROGRAM_ID)}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {shortAddress(PROGRAM_ID)}
-            </a>
-          </p>
+    <main className="mx-auto max-w-4xl px-6 py-10 w-full">
+      <header className="flex items-center justify-between mb-12 animate-rise">
+        <div className="flex items-center gap-3">
+          <Logo />
+          <div>
+            <h1 className="text-xl font-semibold tracking-tight">
+              AMM
+              <span className="ml-2 text-xs font-normal text-zinc-500 uppercase tracking-widest">
+                Turbine3
+              </span>
+            </h1>
+            <div className="flex items-center gap-2 mt-0.5 text-xs text-zinc-400">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="pulse-dot w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                devnet
+              </span>
+              <span className="text-zinc-700">·</span>
+              <a
+                className="font-mono hover:text-emerald-300 transition-colors"
+                href={explorerUrl("address", PROGRAM_ID)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {shortAddress(PROGRAM_ID)}
+              </a>
+            </div>
+          </div>
         </div>
         <WalletMultiButton />
       </header>
 
       {banner && (
         <div
-          className={`mb-6 rounded-lg border px-4 py-3 text-sm ${
+          className={`mb-6 rounded-xl border px-4 py-3 text-sm backdrop-blur animate-rise ${
             banner.kind === "ok"
-              ? "border-emerald-700 bg-emerald-950/40 text-emerald-200"
-              : "border-rose-700 bg-rose-950/40 text-rose-200"
+              ? "border-emerald-500/30 bg-emerald-500/5 text-emerald-200"
+              : "border-rose-500/30 bg-rose-500/5 text-rose-200"
           }`}
         >
-          {banner.text}
-          {banner.tx && (
-            <>
-              {" "}
+          <div className="flex items-center gap-2">
+            {banner.kind === "ok" ? (
+              <CheckIcon className="w-4 h-4 shrink-0" />
+            ) : (
+              <AlertIcon className="w-4 h-4 shrink-0" />
+            )}
+            <span className="flex-1">{banner.text}</span>
+            {banner.tx && (
               <a
-                className="underline"
+                className="underline decoration-dotted hover:opacity-80"
                 href={explorerUrl("tx", banner.tx)}
                 target="_blank"
                 rel="noreferrer"
               >
-                view tx
+                view tx ↗
               </a>
-            </>
-          )}
+            )}
+          </div>
         </div>
       )}
 
-      {!wallet.publicKey && (
-        <p className="text-zinc-400">
-          Connect a wallet (Phantom or Solflare on devnet) to start.
-        </p>
-      )}
+      {!wallet.publicKey && <Hero />}
 
       {wallet.publicKey && program && (
         <Workspace
@@ -123,11 +135,83 @@ export function PoolApp() {
         />
       )}
 
-      <footer className="mt-16 text-xs text-zinc-500">
-        Built from scratch for the Turbine3 cohort. The on-chain program lives
-        on devnet; this UI is a thin client. Source on GitHub.
+      <footer className="mt-20 pt-8 border-t border-zinc-800/60 text-xs text-zinc-500 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          Built from scratch for the{" "}
+          <span className="text-zinc-300">Turbine3</span> cohort. The on-chain
+          program lives on devnet; this UI is a thin client.
+        </div>
+        <a
+          href="https://github.com/Hijanhv/AMM-Turbine3"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 hover:text-zinc-300 transition-colors"
+        >
+          <GitHubIcon className="w-3.5 h-3.5" />
+          Source
+        </a>
       </footer>
     </main>
+  );
+}
+
+function Logo() {
+  return (
+    <div className="relative w-9 h-9 rounded-lg overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#9945ff] via-[#7b2cff] to-[#14f195]" />
+      <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm">
+        Σ
+      </div>
+    </div>
+  );
+}
+
+function Hero() {
+  return (
+    <div className="card animate-rise">
+      <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-8 items-center">
+        <div>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 mb-4">
+            <span className="pulse-dot w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            Live on Solana devnet
+          </div>
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight leading-tight">
+            A constant-product AMM,
+            <br />
+            <span className="bg-gradient-to-r from-[#19fb9b] to-[#9945ff] bg-clip-text text-transparent">
+              built from first principles.
+            </span>
+          </h2>
+          <p className="mt-4 text-sm text-zinc-400 max-w-md leading-relaxed">
+            Initialize an{" "}
+            <code className="text-zinc-300 bg-zinc-800/60 px-1 rounded">
+              (A, B)
+            </code>{" "}
+            pool, supply liquidity for LP tokens, swap along the{" "}
+            <code className="text-zinc-300 bg-zinc-800/60 px-1 rounded">
+              x · y = k
+            </code>{" "}
+            curve, and withdraw your share — all in one page.
+          </p>
+          <div className="mt-6 flex items-center gap-2 text-xs text-zinc-500">
+            Connect Phantom or Solflare (set to devnet) to begin.
+          </div>
+        </div>
+        <ul className="space-y-2.5 text-sm">
+          {[
+            "Initialize new pools with custom seed + fee",
+            "One-click test mints — no CLI needed",
+            "Real-time reserves, LP supply, price",
+            "Authority-gated lock & unlock",
+          ].map((f) => (
+            <li key={f} className="flex items-start gap-2.5 text-zinc-300">
+              <CheckIcon className="w-4 h-4 mt-0.5 text-emerald-400 shrink-0" />
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
 }
 
@@ -216,8 +300,8 @@ function Workspace({ program, busy, setBusy, flash, connection }: WorkspaceProps
   }, [pool, loadPool]);
 
   return (
-    <div className="space-y-8">
-      <Section title="1. Initialize a pool">
+    <div className="space-y-5">
+      <Section title="Initialize a pool" step="01" icon={<SparkIcon />}>
         <InitializeForm
           program={program}
           busy={busy}
@@ -230,16 +314,16 @@ function Workspace({ program, busy, setBusy, flash, connection }: WorkspaceProps
         />
       </Section>
 
-      <Section title="2. Load an existing pool">
+      <Section title="Load an existing pool" step="02" icon={<SearchIcon />}>
         <div className="flex gap-2">
           <input
             value={seedInput}
             onChange={(e) => setSeedInput(e.target.value)}
             placeholder="seed (u64, e.g. 42)"
-            className="flex-1 rounded-md bg-zinc-900 border border-zinc-800 px-3 py-2 text-sm"
+            className="input flex-1"
           />
           <button
-            className="rounded-md bg-zinc-100 text-zinc-900 px-4 py-2 text-sm font-medium disabled:opacity-50"
+            className="btn-ghost"
             disabled={busy}
             onClick={() => void loadPool(seedInput)}
           >
@@ -247,7 +331,10 @@ function Workspace({ program, busy, setBusy, flash, connection }: WorkspaceProps
           </button>
         </div>
         {poolError && (
-          <p className="text-rose-400 text-sm mt-2">{poolError}</p>
+          <p className="text-rose-400 text-xs mt-3 flex items-center gap-1.5">
+            <AlertIcon className="w-3.5 h-3.5" />
+            {poolError}
+          </p>
         )}
       </Section>
 
@@ -255,7 +342,7 @@ function Workspace({ program, busy, setBusy, flash, connection }: WorkspaceProps
         <>
           <PoolCard pool={pool} onRefresh={refresh} />
 
-          <Section title="Deposit">
+          <Section title="Deposit" icon={<DepositIcon />}>
             <DepositForm
               program={program}
               pool={pool}
@@ -266,7 +353,7 @@ function Workspace({ program, busy, setBusy, flash, connection }: WorkspaceProps
             />
           </Section>
 
-          <Section title="Swap">
+          <Section title="Swap" icon={<SwapIcon />}>
             <SwapForm
               program={program}
               pool={pool}
@@ -277,7 +364,7 @@ function Workspace({ program, busy, setBusy, flash, connection }: WorkspaceProps
             />
           </Section>
 
-          <Section title="Withdraw">
+          <Section title="Withdraw" icon={<WithdrawIcon />}>
             <WithdrawForm
               program={program}
               pool={pool}
@@ -288,7 +375,11 @@ function Workspace({ program, busy, setBusy, flash, connection }: WorkspaceProps
             />
           </Section>
 
-          <Section title="Lock / unlock (authority only)">
+          <Section
+            title="Lock / unlock"
+            icon={<LockIcon />}
+            subtitle="Authority only"
+          >
             <LockControls
               program={program}
               pool={pool}
@@ -306,16 +397,39 @@ function Workspace({ program, busy, setBusy, flash, connection }: WorkspaceProps
 
 function Section({
   title,
+  step,
+  icon,
+  subtitle,
   children,
 }: {
   title: string;
+  step?: string;
+  icon?: React.ReactNode;
+  subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-      <h2 className="text-sm font-semibold uppercase tracking-wider text-zinc-400 mb-4">
-        {title}
-      </h2>
+    <section className="card animate-rise">
+      <header className="flex items-center gap-3 mb-4">
+        {step && (
+          <span className="font-mono text-[10px] text-zinc-600 tracking-widest">
+            {step}
+          </span>
+        )}
+        {icon && (
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-zinc-800/60 border border-zinc-700/50 text-emerald-300">
+            {icon}
+          </span>
+        )}
+        <h2 className="text-sm font-semibold tracking-tight text-zinc-100">
+          {title}
+        </h2>
+        {subtitle && (
+          <span className="text-[10px] uppercase tracking-widest text-zinc-500 ml-auto">
+            {subtitle}
+          </span>
+        )}
+      </header>
       {children}
     </section>
   );
@@ -333,72 +447,107 @@ function PoolCard({
       ? Number(pool.reserveB) / Number(pool.reserveA)
       : null;
   return (
-    <Section title="Pool state">
-      <dl className="grid grid-cols-1 md:grid-cols-2 gap-y-2 text-sm">
-        <div>
-          <dt className="text-zinc-500">Config</dt>
-          <dd className="font-mono">{shortAddress(pool.config)}</dd>
+    <section className="card animate-rise overflow-hidden">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-gradient-to-br from-emerald-400/20 to-purple-400/20 border border-emerald-400/30 text-emerald-300">
+            <PoolIcon />
+          </span>
+          <h2 className="text-sm font-semibold tracking-tight">Pool state</h2>
+          {pool.locked ? (
+            <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30">
+              Locked
+            </span>
+          ) : (
+            <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
+              Active
+            </span>
+          )}
         </div>
-        <div>
-          <dt className="text-zinc-500">LP mint</dt>
-          <dd className="font-mono">{shortAddress(pool.mintLp)}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Mint A</dt>
-          <dd className="font-mono">{shortAddress(pool.mintA)}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Mint B</dt>
-          <dd className="font-mono">{shortAddress(pool.mintB)}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Reserve A</dt>
-          <dd>{formatAmount(pool.reserveA, DECIMALS)}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Reserve B</dt>
-          <dd>{formatAmount(pool.reserveB, DECIMALS)}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">LP supply</dt>
-          <dd>{formatAmount(pool.lpSupply, DECIMALS)}</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Your LP</dt>
-          <dd>
-            {pool.userLp === null
-              ? "—"
-              : formatAmount(pool.userLp, DECIMALS)}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Fee</dt>
-          <dd>{(pool.feeBps / 100).toFixed(2)}%</dd>
-        </div>
-        <div>
-          <dt className="text-zinc-500">Status</dt>
-          <dd>
-            {pool.locked ? (
-              <span className="text-amber-400">Locked</span>
-            ) : (
-              <span className="text-emerald-400">Active</span>
-            )}
-          </dd>
-        </div>
-        <div className="md:col-span-2">
-          <dt className="text-zinc-500">Price (B per A)</dt>
-          <dd>{price === null ? "—" : price.toFixed(6)}</dd>
-        </div>
-      </dl>
-      <div className="mt-4">
         <button
-          className="text-xs text-zinc-400 underline decoration-dotted"
+          className="text-xs text-zinc-400 hover:text-zinc-200 inline-flex items-center gap-1 transition-colors"
           onClick={onRefresh}
         >
+          <RefreshIcon className="w-3.5 h-3.5" />
           Refresh
         </button>
       </div>
-    </Section>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+        <Stat label="Reserve A" value={formatAmount(pool.reserveA, DECIMALS)} />
+        <Stat label="Reserve B" value={formatAmount(pool.reserveB, DECIMALS)} />
+        <Stat
+          label="LP supply"
+          value={formatAmount(pool.lpSupply, DECIMALS)}
+        />
+        <Stat
+          label="Your LP"
+          value={
+            pool.userLp === null ? "—" : formatAmount(pool.userLp, DECIMALS)
+          }
+          highlight
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+        <Meta label="Price (B / A)" value={price === null ? "—" : price.toFixed(6)} />
+        <Meta label="Fee" value={`${(pool.feeBps / 100).toFixed(2)}%`} />
+        <Meta label="Config" mono value={shortAddress(pool.config)} />
+        <Meta label="LP mint" mono value={shortAddress(pool.mintLp)} />
+        <Meta label="Mint A" mono value={shortAddress(pool.mintA)} />
+        <Meta label="Mint B" mono value={shortAddress(pool.mintB)} />
+      </div>
+    </section>
+  );
+}
+
+function Stat({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-lg border px-3 py-2.5 ${
+        highlight
+          ? "border-emerald-500/30 bg-emerald-500/5"
+          : "border-zinc-800/80 bg-zinc-900/40"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-widest text-zinc-500">
+        {label}
+      </div>
+      <div
+        className={`text-base font-medium mt-0.5 tabular-nums ${
+          highlight ? "text-emerald-200" : "text-zinc-100"
+        }`}
+      >
+        {value}
+      </div>
+    </div>
+  );
+}
+
+function Meta({
+  label,
+  value,
+  mono,
+}: {
+  label: string;
+  value: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2 rounded-md bg-zinc-900/40 border border-zinc-800/60 px-3 py-1.5">
+      <span className="text-zinc-500">{label}</span>
+      <span className={`text-zinc-200 ${mono ? "font-mono" : ""}`}>
+        {value}
+      </span>
+    </div>
   );
 }
 
@@ -502,7 +651,7 @@ function InitializeForm({
         <button
           disabled={busy}
           onClick={createTestMints}
-          className="rounded-md bg-zinc-100 text-zinc-900 px-3 py-1.5 text-xs font-medium disabled:opacity-50"
+          className="btn-ghost text-xs px-3 py-1.5"
         >
           Create test mints
         </button>
@@ -534,7 +683,7 @@ function InitializeForm({
       <button
         disabled={busy}
         onClick={onSubmit}
-        className="rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-medium px-4 py-2 text-sm disabled:opacity-50"
+        className="btn-primary"
       >
         Initialize
       </button>
@@ -618,7 +767,7 @@ function DepositForm({
       <button
         disabled={busy}
         onClick={submit}
-        className="rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-medium px-4 py-2 text-sm disabled:opacity-50"
+        className="btn-primary"
       >
         Deposit
       </button>
@@ -721,7 +870,7 @@ function SwapForm({
       <button
         disabled={busy}
         onClick={submit}
-        className="rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-medium px-4 py-2 text-sm disabled:opacity-50"
+        className="btn-primary"
       >
         Swap
       </button>
@@ -791,7 +940,7 @@ function WithdrawForm({
       <button
         disabled={busy}
         onClick={submit}
-        className="rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-medium px-4 py-2 text-sm disabled:opacity-50"
+        className="btn-primary"
       >
         Withdraw
       </button>
@@ -855,14 +1004,14 @@ function LockControls({
       <button
         disabled={busy || pool.locked}
         onClick={() => void call("lock")}
-        className="rounded-md bg-amber-500 hover:bg-amber-400 text-zinc-950 font-medium px-4 py-2 text-sm disabled:opacity-50"
+        className="btn-warning"
       >
         Lock
       </button>
       <button
         disabled={busy || !pool.locked}
         onClick={() => void call("unlock")}
-        className="rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-medium px-4 py-2 text-sm disabled:opacity-50"
+        className="btn-primary"
       >
         Unlock
       </button>
@@ -879,10 +1028,187 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-xs uppercase tracking-wider text-zinc-500">
+      <span className="text-[10px] uppercase tracking-widest text-zinc-500">
         {label}
       </span>
-      <div className="mt-1">{children}</div>
+      <div className="mt-1.5">{children}</div>
     </label>
+  );
+}
+
+type IconProps = { className?: string };
+
+function CheckIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 10.5l3.5 3.5L16 6" />
+    </svg>
+  );
+}
+
+function AlertIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M10 7v4" />
+      <circle cx="10" cy="14" r="0.5" fill="currentColor" />
+      <path d="M10 2L1.5 17h17z" />
+    </svg>
+  );
+}
+
+function SparkIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M10 2v4M10 14v4M2 10h4M14 10h4M5 5l2.5 2.5M12.5 12.5L15 15M5 15l2.5-2.5M12.5 7.5L15 5" />
+    </svg>
+  );
+}
+
+function SearchIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="9" cy="9" r="5" />
+      <path d="M13 13l4 4" />
+    </svg>
+  );
+}
+
+function DepositIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M10 3v10M6 9l4 4 4-4" />
+      <path d="M3 17h14" />
+    </svg>
+  );
+}
+
+function SwapIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 7h12l-3-3M16 13H4l3 3" />
+    </svg>
+  );
+}
+
+function WithdrawIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M10 17V7M6 11l4-4 4 4" />
+      <path d="M3 3h14" />
+    </svg>
+  );
+}
+
+function LockIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="4" y="9" width="12" height="8" rx="2" />
+      <path d="M7 9V6a3 3 0 016 0v3" />
+    </svg>
+  );
+}
+
+function PoolIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M2 8c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2" />
+      <path d="M2 13c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2" />
+    </svg>
+  );
+}
+
+function RefreshIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M3 10a7 7 0 0112-5l2 2M17 4v3h-3M17 10a7 7 0 01-12 5l-2-2M3 16v-3h3" />
+    </svg>
+  );
+}
+
+function GitHubIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.27-.01-1-.02-1.96-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.97.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18.92-.26 1.91-.39 2.89-.39.98 0 1.97.13 2.89.39 2.21-1.49 3.18-1.18 3.18-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.26 5.69.41.36.78 1.06.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.55C20.21 21.38 23.5 17.08 23.5 12 23.5 5.65 18.35.5 12 .5z" />
+    </svg>
   );
 }
