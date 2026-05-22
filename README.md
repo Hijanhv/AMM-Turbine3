@@ -9,6 +9,10 @@ the pool, and — for the optional pool authority — lock and unlock trading.
 The math, accounts, instructions, and tests were all written from scratch for
 this submission.
 
+- **Web app:** <https://amm-solana.vercel.app>
+- **Program (devnet):** [`4DmfmgZHzg7aTC11qaZGc7WsbiA7hjtgLU4TpePrSB3v`](https://explorer.solana.com/address/4DmfmgZHzg7aTC11qaZGc7WsbiA7hjtgLU4TpePrSB3v?cluster=devnet)
+- **Source:** <https://github.com/Hijanhv/AMM-Turbine3>
+
 ## Repository layout
 
 ```
@@ -185,6 +189,8 @@ app that:
 - Exposes forms for `initialize`, `deposit`, `swap`, `withdraw`, and the
   authority-only `lock` / `unlock` flows, plus a live pool-state panel.
 
+Live deployment: <https://amm-solana.vercel.app>.
+
 #### Run it locally
 
 ```bash
@@ -194,13 +200,24 @@ yarn dev
 # open http://localhost:3000
 ```
 
+You'll need a Solana wallet extension (Phantom or Solflare) set to **devnet**
+and an existing pair of SPL token mints to initialize a pool against. Create
+test mints with the CLI if you don't have any:
+
+```bash
+spl-token --url devnet create-token
+spl-token --url devnet create-account <MINT>
+spl-token --url devnet mint <MINT> 1000000
+```
+
 #### Deploy to Vercel
 
-Easiest path is the dashboard:
+From the dashboard:
 
 1. Push this repo to GitHub.
 2. On Vercel, **New Project → Import** the repo.
-3. Set **Root Directory** to `app`. Framework auto-detected (Next.js).
+3. Set **Root Directory** to `app`. The framework is auto-detected as
+   Next.js.
 4. Optional: in **Environment Variables** add
    - `NEXT_PUBLIC_RPC_URL` — your preferred devnet RPC (defaults to
      `clusterApiUrl("devnet")`)
@@ -208,17 +225,28 @@ Easiest path is the dashboard:
      different ID
 5. **Deploy**.
 
-Or from the CLI:
+From the CLI (what this repo was deployed with):
 
 ```bash
 cd app
-npx vercel        # first-time link
-npx vercel --prod # production deploy
+vercel link --project amm-solana --yes
+vercel deploy --prod --yes
 ```
 
-The whole frontend is a static + client-rendered Next.js app, so the free
-tier on Vercel covers it. Re-deploys are automatic on every push once the
-GitHub integration is set up.
+The frontend is a static + client-rendered Next.js app, so the Vercel free
+tier covers it. Pushes to `main` auto-redeploy once the GitHub integration
+is wired up.
+
+#### Gotchas worth knowing
+
+- **`@types/bn.js` must live in `app/`'s devDependencies.** Vercel doesn't
+  see the repo-root `package.json`, so types installed only at the root
+  break the production typecheck.
+- **TS target must be `ES2020` or newer** — `bn.js` and Solana web3 ship
+  `BigInt` literals. The default `ES2017` from `create-next-app` fails to
+  compile.
+- **Tailwind v4 reserves `@utility` for plain names** — `@utility input:focus`
+  is invalid. Define focus rules as regular CSS in `globals.css`.
 
 ## Notes on the design
 
