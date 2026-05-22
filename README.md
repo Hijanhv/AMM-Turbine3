@@ -112,9 +112,17 @@ cargo test --manifest-path programs/amm/Cargo.toml --lib
 
 ### Tests passing
 
-![tests passing](docs/tests-passing.png)
+**`anchor test` — 17/17 integration tests**
 
-The raw mocha output is captured in `docs/test-output.txt`.
+![anchor test passing](docs/anchor-tests-passing.png)
+
+**`cargo test --lib` — 3/3 Rust unit tests for the curve math**
+
+![cargo test passing](docs/cargo-tests-passing.png)
+
+The raw mocha output is captured in `docs/test-output.txt`. A clean
+rendered version of the anchor-test output is also available at
+`docs/tests-passing.png`.
 
 ## Deployment
 
