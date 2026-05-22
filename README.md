@@ -188,6 +188,10 @@ app that:
   `4DmfmgZHzg7aTC11qaZGc7WsbiA7hjtgLU4TpePrSB3v`.
 - Exposes forms for `initialize`, `deposit`, `swap`, `withdraw`, and the
   authority-only `lock` / `unlock` flows, plus a live pool-state panel.
+- Has a one-click **Create test mints** button that mints two fresh
+  devnet SPL tokens (1,000,000 each, 6 decimals) into the connected
+  wallet and auto-fills the Mint A / Mint B inputs, so first-time users
+  can spin up a pool without leaving the page.
 
 Live deployment: <https://amm-solana.vercel.app>.
 
@@ -200,15 +204,11 @@ yarn dev
 # open http://localhost:3000
 ```
 
-You'll need a Solana wallet extension (Phantom or Solflare) set to **devnet**
-and an existing pair of SPL token mints to initialize a pool against. Create
-test mints with the CLI if you don't have any:
-
-```bash
-spl-token --url devnet create-token
-spl-token --url devnet create-account <MINT>
-spl-token --url devnet mint <MINT> 1000000
-```
+You'll need a Solana wallet extension (Phantom or Solflare) set to **devnet**.
+You don't need to bring your own SPL mints — hit **Create test mints** in
+the initialize form and the app will create two fresh tokens for you and
+plug them into the mint inputs. If you'd rather use existing mints, the
+inputs accept any pair of devnet mint pubkeys.
 
 #### Deploy to Vercel
 
@@ -234,8 +234,12 @@ vercel deploy --prod --yes
 ```
 
 The frontend is a static + client-rendered Next.js app, so the Vercel free
-tier covers it. Pushes to `main` auto-redeploy once the GitHub integration
-is wired up.
+tier covers it.
+
+**GitHub auto-deploy is already wired up** for this project — `vercel git
+connect <repo>` connected the production branch to `main`, so every push
+triggers a fresh build. The CLI flow above is only needed for the very
+first deployment (or for previewing a branch).
 
 #### Gotchas worth knowing
 
@@ -247,6 +251,15 @@ is wired up.
   compile.
 - **Tailwind v4 reserves `@utility` for plain names** — `@utility input:focus`
   is invalid. Define focus rules as regular CSS in `globals.css`.
+- **Monorepo Vercel deploys need `outputFileTracingRoot`.** Because the
+  Anchor workspace sits one directory above `app/`, Vercel's
+  `modifyConfig` step crashes (`path argument undefined`) on builds where
+  the option is unset. Pin it in `next.config.ts`:
+  ```ts
+  outputFileTracingRoot: path.resolve(process.cwd(), "..")
+  ```
+  Leave `distDir` at its default — Vercel still expects the build output
+  inside `app/.next/`.
 
 ## Notes on the design
 
