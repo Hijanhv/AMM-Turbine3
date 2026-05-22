@@ -23,6 +23,7 @@ import {
   parseAmount,
   shortAddress,
 } from "../lib/pool";
+import { createTestMint } from "../lib/create-mint";
 
 type Banner = { kind: "ok" | "err"; text: string; tx?: string };
 
@@ -415,12 +416,34 @@ function InitializeForm({
   onCreated: (seed: BN) => void;
 }) {
   const wallet = useWallet();
+  const { connection } = useConnection();
   const [seed, setSeed] = useState(() =>
     Math.floor(Math.random() * 1_000_000).toString(),
   );
   const [mintA, setMintA] = useState("");
   const [mintB, setMintB] = useState("");
   const [feeBps, setFeeBps] = useState("30");
+
+  const createTestMints = async () => {
+    if (!wallet.publicKey || !wallet.signTransaction) return;
+    setBusy(true);
+    try {
+      const initial = 1_000_000n * 10n ** 6n; // 1,000,000 tokens at 6 decimals
+      const a = await createTestMint(connection, wallet, 6, initial);
+      const b = await createTestMint(connection, wallet, 6, initial);
+      setMintA(a.mint.toBase58());
+      setMintB(b.mint.toBase58());
+      flash({
+        kind: "ok",
+        text: "Minted 1,000,000 of each test token to your wallet.",
+        tx: b.signature,
+      });
+    } catch (err) {
+      flash({ kind: "err", text: (err as Error).message });
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const onSubmit = async () => {
     if (!wallet.publicKey) return;
@@ -471,6 +494,19 @@ function InitializeForm({
           onChange={(e) => setSeed(e.target.value)}
         />
       </Field>
+      <div className="flex items-center justify-between rounded-md border border-dashed border-zinc-700 px-3 py-2">
+        <span className="text-xs text-zinc-400">
+          Don&apos;t have SPL mints? Create two fresh devnet tokens funded to
+          your wallet.
+        </span>
+        <button
+          disabled={busy}
+          onClick={createTestMints}
+          className="rounded-md bg-zinc-100 text-zinc-900 px-3 py-1.5 text-xs font-medium disabled:opacity-50"
+        >
+          Create test mints
+        </button>
+      </div>
       <Field label="Mint A">
         <input
           className="input font-mono"
