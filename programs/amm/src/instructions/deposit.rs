@@ -137,6 +137,8 @@ pub fn deposit_handler(
         (needed_b, lp)
     };
 
+    require!(deposit_b > 0, AmmError::ZeroAmount);
+    require!(lp_amount > 0, AmmError::ZeroAmount);
     require!(lp_amount >= min_lp, AmmError::SlippageExceeded);
 
     ctx.accounts.transfer_in(
