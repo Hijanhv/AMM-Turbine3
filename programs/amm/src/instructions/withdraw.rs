@@ -127,6 +127,8 @@ pub fn withdraw_handler(
     let out_a = withdraw_amount(lp_amount, reserve_a, lp_supply)?;
     let out_b = withdraw_amount(lp_amount, reserve_b, lp_supply)?;
 
+    require!(out_a > 0, AmmError::ZeroAmount);
+    require!(out_b > 0, AmmError::ZeroAmount);
     require!(out_a >= min_a, AmmError::SlippageExceeded);
     require!(out_b >= min_b, AmmError::SlippageExceeded);
 
